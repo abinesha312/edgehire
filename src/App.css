@@ -2,37 +2,73 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+nav ul {
+  list-style-type: none;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+nav ul li {
+  display: inline;
+  margin: 0 10px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  background-color: #4CAF50;
   color: white;
+  border: none;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+button:hover {
+  background-color: #45a049;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+input[type="text"] {
+  margin: 10px 0;
+  padding: 5px;
+  width: 300px;
+}
+
+.simulator-page .response-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.input-label {
+  flex: 0 0 100%;
+  margin-bottom: 10px;
+  color: #ffbb39;
+}
+
+textarea {
+  flex: 1;
+  resize: vertical; /* Allows vertical resizing */
+}
+
+button {
+  /* Button styles as previously defined */
+  flex: 0 0 auto;
+  align-self: flex-end;
+  margin: 0; /* Removes margin since we're aligning them in a flex container */
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 600px) {
+  .simulator-page .response-section {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+
+  textarea, button {
+    width: 100%;
+    margin-top: 10px;
   }
 }
