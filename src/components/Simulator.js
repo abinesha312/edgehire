@@ -196,7 +196,7 @@ const Simulator = () => {
                 const data = await transcribeResponse.json();
                 console.log('Transcription received:', data.transcription);
                 setTranscription(data.transcription);
-                
+
                 // Automatically evaluate the response using the transcription
                 await evaluateResponse(data.transcription);
             } catch (error) {
@@ -347,7 +347,7 @@ const Simulator = () => {
         // Function to parse the evaluation text into sections and bullet points
         const parseEvaluation = (text) => {
             if (!text) return [];
-            
+
             const sections = text.split(/\*\*(.*?):\*\*/);
             const parsed = [];
             for (let i = 1; i < sections.length; i += 2) {
@@ -358,10 +358,10 @@ const Simulator = () => {
             }
             return parsed;
         };
-    
+
         // If there's no evaluation, show a default message.
         const parsedEvaluation = evaluation ? parseEvaluation(evaluation) : [{ title: 'No evaluation available', content: '' }];
-    
+
         return (
             <div style={{
                 position: 'absolute',
@@ -392,16 +392,16 @@ const Simulator = () => {
             </div>
         );
     };
-    
+
 
 
     const QuestionItem = ({ question, isSelected, onSelect, evaluation }) => {
         const [showPopup, setShowPopup] = useState(false);
-    
+
         return (
-            <li 
-                style={{ 
-                    marginBottom: '10px', 
+            <li
+                style={{
+                    marginBottom: '10px',
                     position: 'relative',
                     cursor: 'pointer'
                 }}
@@ -535,8 +535,8 @@ const Simulator = () => {
                 )}
 
 
-                <div style={{ marginTop: '20px', width: '100%', maxWidth: '640px' }}>
-                    <h3>Your Response</h3>
+                <div className="response-section" style={{ marginTop: '20px', width: '100%', maxWidth: '640px' }}>
+                    <span className="input-label">Your Response:</span>
                     <textarea
                         value={userResponse}
                         onChange={(e) => setUserResponse(e.target.value)}
