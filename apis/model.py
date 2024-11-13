@@ -31,7 +31,7 @@ def load_db():
         try:
             embeddings = HuggingFaceEmbeddings(
                 model_name="sentence-transformers/all-mpnet-base-v2",
-                model_kwargs={'device': 'cpu'}
+                model_kwargs={'device': 'cuda'}  # Change 'cpu' to 'cuda'
             )
 
             global_db = FAISS.load_local(
@@ -50,16 +50,19 @@ def load_db():
 # Load the Ollama LLM
 llm = OllamaLLM(
     model="llama3",
-    base_url="http://localhost:11434",  # Add this line
+    base_url="http://localhost:11434",
     verbose=True,
     callbacks=[StreamingStdOutCallbackHandler()],
+    gpus=1,  # Specify the number of GPUs to use
+    n_gpu_layers=-1,  # Use all available GPU layers
+    n_ctx=2048,  # Adjust context size as needed
 )
 
 # OpenAI client setup
 client = OpenAI(api_key="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")
 
 # Load the Whisper model globally
-model = whisper.load_model("base")
+model = whisper.load_model("base").to("cuda")
 
 UPLOAD_FOLDER = 'temp_uploads'
 if not os.path.exists(UPLOAD_FOLDER):
