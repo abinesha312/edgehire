@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 
 const Simulator = () => {
@@ -23,6 +25,7 @@ const Simulator = () => {
     const [selectedQuestion, setSelectedQuestion] = useState('');
     const [userResponse, setUserResponse] = useState('');
     const videoRef = useRef(null); // Ref for the video element
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
     const colors = {
         darkGreen: '#31473A',
@@ -83,6 +86,7 @@ const Simulator = () => {
                 Cookies.set('role', jobRole);
                 Cookies.set('level', level);
                 // Make API call to generate questions
+                // const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/generate_questions', {
                 const response = await fetch('http://127.0.0.1:5000/generate_questions', {
                     method: 'POST',
                     headers: {
@@ -167,7 +171,8 @@ const Simulator = () => {
                 formData.append('totalChunks', totalChunks);
 
                 try {
-                    const response = await fetch('http://127.0.0.1:5000/upload_chunk', {
+                    const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/upload_chunk', {
+                        // const response = await fetch('http://127.0.0.1:5000/upload_chunk', {
                         method: 'POST',
                         body: formData,
                     });
@@ -185,7 +190,8 @@ const Simulator = () => {
             }
 
             try {
-                const transcribeResponse = await fetch('http://127.0.0.1:5000/transcribe_video', {
+                const transcribeResponse = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/transcribe_video', {
+                    // const transcribeResponse = await fetch('http://127.0.0.1:5000/transcribe_video', {
                     method: 'POST',
                 });
 
@@ -212,21 +218,22 @@ const Simulator = () => {
     const evaluateResponse = async (responseText) => {
         const role = Cookies.get('role');
         const level = Cookies.get('level');
+        const currentQuestion = questions[currentQuestionIndex];
 
-        if (!selectedQuestion) {
-            alert('Please select a question.');
+        if (!currentQuestion) {
+            alert('No question selected.');
             return;
         }
 
         const payload = {
-            question: selectedQuestion,
+            question: currentQuestion,
             response: responseText,
             role: role,
             level: level,
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/evaluate_response', {
+            const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/evaluate_response', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,7 +250,7 @@ const Simulator = () => {
 
             // Save evaluation to state and local storage
             setEvaluations(prev => {
-                const newEvaluations = { ...prev, [selectedQuestion]: data.evaluation };
+                const newEvaluations = { ...prev, [currentQuestion]: data.evaluation };
                 localStorage.setItem('evaluations', JSON.stringify(newEvaluations));
                 return newEvaluations;
             });
@@ -254,6 +261,7 @@ const Simulator = () => {
             alert('Failed to evaluate response. Please try again.');
         }
     };
+
 
     const closePreview = () => {
         setShowPreview(false);
@@ -275,9 +283,10 @@ const Simulator = () => {
     const submitResponse = async () => {
         const role = Cookies.get('role');
         const level = Cookies.get('level');
+        const currentQuestion = questions[currentQuestionIndex];
 
-        if (!selectedQuestion) {
-            alert('Please select a question.');
+        if (!currentQuestion) {
+            alert('No question selected.');
             return;
         }
 
@@ -287,14 +296,14 @@ const Simulator = () => {
         }
 
         const payload = {
-            question: selectedQuestion,
+            question: currentQuestion,
             response: userResponse,
             role: role,
             level: level,
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/evaluate_response', {
+            const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/evaluate_response', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -311,7 +320,7 @@ const Simulator = () => {
 
             // Save evaluation to state and local storage
             setEvaluations(prev => {
-                const newEvaluations = { ...prev, [selectedQuestion]: data.evaluation };
+                const newEvaluations = { ...prev, [currentQuestion]: data.evaluation };
                 localStorage.setItem('evaluations', JSON.stringify(newEvaluations));
                 return newEvaluations;
             });
@@ -322,6 +331,7 @@ const Simulator = () => {
             alert('Failed to evaluate response. Please try again.');
         }
     };
+
 
 
     const sendVideoForTranscription = async () => {
@@ -344,23 +354,21 @@ const Simulator = () => {
     };
 
     const HoverPopup = ({ evaluation }) => {
-        // Function to parse the evaluation text into sections and bullet points
-        const parseEvaluation = (text) => {
-            if (!text) return [];
+        if (!evaluation) return null;
 
+        const parseEvaluation = (text) => {
             const sections = text.split(/\*\*(.*?):\*\*/);
             const parsed = [];
             for (let i = 1; i < sections.length; i += 2) {
                 parsed.push({
-                    title: sections[i],             // Section title (e.g., "Relevance to the question")
-                    content: sections[i + 1].trim() // Section content
+                    title: sections[i],
+                    content: sections[i + 1].trim()
                 });
             }
             return parsed;
         };
 
-        // If there's no evaluation, show a default message.
-        const parsedEvaluation = evaluation ? parseEvaluation(evaluation) : [{ title: 'No evaluation available', content: '' }];
+        const parsedEvaluation = parseEvaluation(evaluation);
 
         return (
             <div style={{
@@ -373,20 +381,14 @@ const Simulator = () => {
                 borderRadius: '5px',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
                 zIndex: 1000,
-                maxWidth: '400px',
-                fontSize: '14px'
+                maxWidth: '300px',
+                fontSize: '14px',
+                color: 'black'
             }}>
                 {parsedEvaluation.map((section, index) => (
                     <div key={index} style={{ marginBottom: '10px' }}>
                         <strong>{section.title}</strong>
-                        <ul style={{ margin: '5px 0 0 20px', paddingLeft: 0 }}>
-                            {section.content
-                                ? section.content.split('.').filter(Boolean).map((point, i) => (
-                                    <li key={i} style={{ marginBottom: '5px' }}>{point.trim()}.</li>
-                                ))
-                                : <li style={{ fontStyle: 'italic' }}>No further details provided.</li>
-                            }
-                        </ul>
+                        <p>{section.content}</p>
                     </div>
                 ))}
             </div>
@@ -403,7 +405,10 @@ const Simulator = () => {
                 style={{
                     marginBottom: '10px',
                     position: 'relative',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    padding: '5px',
+                    backgroundColor: isSelected ? '#f0f0f0' : 'transparent',
+                    borderRadius: '5px'
                 }}
                 onMouseEnter={() => setShowPopup(true)}
                 onMouseLeave={() => setShowPopup(false)}
@@ -418,31 +423,123 @@ const Simulator = () => {
                     />
                     {question}
                 </label>
-                {showPopup && <HoverPopup evaluation={evaluation} />}
+                {showPopup && evaluation && <HoverPopup evaluation={evaluation} />}
             </li>
         );
     };
+
+    const handlePrevQuestion = () => {
+        setCurrentQuestionIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : questions.length - 1
+        );
+    };
+
+    const handleNextQuestion = () => {
+        setCurrentQuestionIndex((prevIndex) =>
+            prevIndex < questions.length - 1 ? prevIndex + 1 : 0
+        );
+    };
+
+    const arrowStyle = {
+        background: 'none',
+        border: 'none',
+        fontSize: '24px',
+        cursor: 'pointer',
+    };
+
+    const QuestionCarousel = () => {
+        useEffect(() => {
+            if (questions && questions.length > 0) {
+                const currentQuestion = questions[currentQuestionIndex];
+                setSelectedQuestion(currentQuestion);
+            }
+        }, [currentQuestionIndex, questions]);
+
+        if (!questions || questions.length === 0) {
+            return <p>No questions available yet.</p>;
+        }
+
+        const currentQuestion = questions[currentQuestionIndex];
+
+        return (
+            <div style={{ padding: '20px', position: 'relative' }}>
+                <h2>Generated Questions</h2>
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <strong>Question {currentQuestionIndex + 1}/{questions.length}</strong>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <button onClick={handlePrevQuestion} style={arrowStyle}>
+                        <FaArrowLeft />
+                    </button>
+                    <div style={{ flex: 1, padding: '0 20px' }}>
+                        <p style={{ textAlign: 'justify', minHeight: '100px' }}>{currentQuestion}</p>
+                        <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px', maxHeight: '350px', overflow: 'auto' }}>
+                            <strong>Response:</strong>
+                            <p>
+                                {evaluations[currentQuestion] || "No Response. Kindly answer this question."}
+                            </p>
+                        </div>
+                    </div>
+                    <button onClick={handleNextQuestion} style={arrowStyle}>
+                        <FaArrowRight />
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+
 
 
 
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             {/* Left side: Display generated questions */}
-            <div style={{ flex: 1, padding: '20px', borderRight: '1px solid #ccc', overflowY: 'auto' }}>
+            {/* <div style={{ flex: 1, padding: '20px', borderRight: '1px solid #ccc', overflowY: 'auto' }}>
                 <h2>Generated Questions</h2>
                 {!isModalOpen && (
                     <div>
                         {questions ? (
                             <div>
-                                <ul>
+                                <ul style={{ listStyleType: 'none', padding: 0, display: 'block' }}>
                                     {questions.map((question, index) => (
-                                        <QuestionItem
+                                        <li
                                             key={index}
-                                            question={question}
-                                            isSelected={selectedQuestion === question}
-                                            onSelect={setSelectedQuestion}
-                                            evaluation={evaluations[question]}
-                                        />
+                                            style={{
+                                                marginBottom: '10px',
+                                                position: 'relative',
+                                                display: 'block', // Ensure items are displayed as block elements
+                                            }}
+                                        >
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="question"
+                                                    value={question}
+                                                    checked={selectedQuestion === question}
+                                                    onChange={(e) => setSelectedQuestion(e.target.value)}
+                                                />
+                                                {question}
+                                            </label>
+                                            {evaluations[question] && (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: '100%',
+                                                        left: '0',
+                                                        backgroundColor: '#fff',
+                                                        border: '1px solid #ccc',
+                                                        padding: '10px',
+                                                        zIndex: 1,
+                                                        width: '300px',
+                                                        boxShadow: '0px 4px 6px rgba(0,0,0,0.1)',
+                                                    }}
+                                                >
+                                                    <strong>Evaluation:</strong>
+                                                    <p>{evaluations[question]}</p>
+                                                </div>
+                                            )}
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
@@ -451,41 +548,85 @@ const Simulator = () => {
                         )}
                     </div>
                 )}
+            </div> */}
+            <div style={{ flex: 1, padding: '20px', borderRight: '1px solid #ccc', overflowY: 'auto' }}>
+                {!isModalOpen && <QuestionCarousel />}
             </div>
 
             {/* Right side: Display the live webcam stream */}
-            <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <video
-                    ref={videoRef}
-                    style={{ width: '50%', maxWidth: '470px', maxHeight: '480px', border: '2px solid #ccc', borderRadius: '10px' }}
-                    autoPlay
-                />
-                <div style={{ marginTop: '20px' }}>
-                    <button
-                        onClick={toggleRecording}
+            <div style={{
+                flex: 1,
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                {/* Video and Button Container */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '20px', // Adds space between the video and button
+                    width: '100%',
+                }}>
+                    <video
+                        ref={videoRef}
                         style={{
-                            width: '100px',
-                            height: '100px',
-                            backgroundColor: recordingStarted ? 'red' : '#e1e0e0d4',
-                            border: 'none',
-                            borderRadius: '10px',
-                            marginTop: '20px',
-                            cursor: 'pointer',
+                            width: '50%',
+                            maxWidth: '470px',
+                            maxHeight: '480px',
+                            border: '2px solid #ccc',
+                            borderRadius: '10px'
+                        }}
+                        autoPlay
+                    />
+                    <div
+                        style={{
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            width: '100px',
+                            height: '100px',
                         }}
                     >
-                        {recordingStarted ? 'Stop' : 'Start'}
-                    </button>
+                        <button
+                            onClick={toggleRecording}
+                            style={{
+                                width: '100px',
+                                height: '100px',
+                                backgroundColor: recordingStarted ? 'red' : 'green',
+                                border: 'none',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                clipPath: recordingStarted
+                                    ? 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' // Hexagon
+                                    : 'polygon(50% 0%, 100% 100%, 0% 100%)', // Triangle
+                                transform: 'rotate(90deg)', // Rotate shape
+                            }}
+                        >
+                            <span
+                                style={{
+                                    transform: 'rotate(-90deg)', // Counter-rotate text
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    paddingRight: '20px'
+                                }}
+                            >
+                                {recordingStarted ? 'Stop' : 'Start'}
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
+                {/* Uploading Section */}
                 {isUploading && (
                     <div style={{ marginTop: '20px' }}>
                         Uploading: {uploadProgress.toFixed(2)}%
                     </div>
                 )}
-
 
                 {/* Video Preview Popup */}
                 {showPreview && (
@@ -514,7 +655,12 @@ const Simulator = () => {
                                 ref={previewRef}
                                 src={previewUrl}
                                 controls
-                                style={{ width: '100%', maxHeight: '70vh', border: '2px solid #ccc', borderRadius: '10px' }}
+                                style={{
+                                    width: '100%',
+                                    maxHeight: '70vh',
+                                    border: '2px solid #ccc',
+                                    borderRadius: '10px'
+                                }}
                             />
                             <button
                                 onClick={closePreview}
@@ -534,7 +680,7 @@ const Simulator = () => {
                     </div>
                 )}
 
-
+                {/* Response Section */}
                 <div className="response-section" style={{ marginTop: '20px', width: '100%', maxWidth: '640px' }}>
                     <span className="input-label">Your Response:</span>
                     <textarea
@@ -542,7 +688,11 @@ const Simulator = () => {
                         onChange={(e) => setUserResponse(e.target.value)}
                         placeholder="Type your response here..."
                         rows={6}
-                        style={{ width: '100%', padding: '10px', borderRadius: '5px' }}
+                        style={{
+                            width: '100%',
+                            padding: '10px',
+                            borderRadius: '5px'
+                        }}
                     />
                     <button
                         onClick={submitResponse}
@@ -560,13 +710,14 @@ const Simulator = () => {
                     </button>
                 </div>
 
+                {/* Transcription Section */}
                 {transcription && (
                     <div style={{ marginTop: '20px', textAlign: 'center' }}>
                         <h3>Transcription Result</h3>
                         <p>{transcription}</p>
                     </div>
                 )}
-                <button
+                {/* <button
                     onClick={sendVideoForTranscription}
                     style={{
                         width: '100px',
@@ -582,7 +733,7 @@ const Simulator = () => {
                     }}
                 >
                     Transcribe
-                </button>
+                </button> */}
             </div>
 
             {/* Modal Popup */}

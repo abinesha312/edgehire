@@ -111,29 +111,29 @@ const ModalRecording = ({ onClose, onSend }) => {
         alignItems: 'center'
       }}>
         {(status === 'streaming' || status === 'recording') && (
-          <video 
-            ref={videoLiveRef} 
-            autoPlay 
+          <video
+            ref={videoLiveRef}
+            autoPlay
             playsInline
-            muted 
-            style={{ 
-              width: '100%', 
-              maxWidth: '640px', 
-              maxHeight: '480px', 
-              objectFit: 'contain' 
+            muted
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              maxHeight: '480px',
+              objectFit: 'contain'
             }}
           />
         )}
         {status === 'success' && recordedVideoUrl && (
-          <video 
-            ref={videoRtaRef} 
+          <video
+            ref={videoRtaRef}
             src={recordedVideoUrl}
-            controls 
-            style={{ 
-              width: '100%', 
-              maxWidth: '640px', 
-              maxHeight: '480px', 
-              objectFit: 'contain' 
+            controls
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              maxHeight: '480px',
+              objectFit: 'contain'
             }}
           />
         )}
