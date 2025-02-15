@@ -1,70 +1,175 @@
-# Getting Started with Create React App
+# EdgeHire: AI-Powered Interview Simulation Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Project Overview
 
-## Available Scripts
+EdgeHire is an **AI-driven interview simulation platform** designed to help users prepare for job interviews through realistic and interactive experiences. By leveraging **advanced AI models**, the platform generates interview questions, records and transcribes user responses, and evaluates those responses with detailed feedback. This ensures users can practice and improve their interview skills efficiently.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌟 Key Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### ✅ AI-Powered Interview Questions
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Utilizes **OpenAI's GPT models** and **FAISS vector search** to generate job-specific questions.
+- Questions are tailored based on the **job role** and **experience level**.
 
-### `npm test`
+### ✅ Lightweight AI Integration
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Hosted on **RunPod** to reduce local computational load.
+- Uses **cloud-based AI models** for scalability and efficiency.
 
-### `npm run build`
+### ✅ Real-Time Response Transcription & Evaluation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Uses **OpenAI Whisper** for **speech-to-text transcription**.
+- AI-based evaluation **grades responses** based on **relevance, depth, and clarity**.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### ✅ Rich Question Dataset
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Scrapes GeeksforGeeks** for **technical questions**.
+- Processes and stores data using **FAISS vector search** for quick retrieval.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🏗️ System Architecture
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+EdgeHire follows a **modular architecture** with a **React frontend** and a **Flask backend**, ensuring a **seamless user experience**.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### **Frontend (React) 🖥️**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Built using **React.js**.
+- Core components:
+  - `Simulator.js`: Manages interview simulation.
+  - `Demo.js`: Handles UI interactions.
+- Features:
+  - Users **navigate through questions**.
+  - Record responses with **video/audio support**.
+  - View **AI-generated feedback**.
 
-## Learn More
+### **Backend (Flask) 🔥**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Provides API endpoints for:
+  - `/generate_questions` → Generates interview questions.
+  - `/evaluate_response` → Analyzes user responses.
+  - `/transcribe_video` → Converts recorded video into text.
+- Integrates with **FAISS vector store** for **efficient question retrieval**.
+- Uses **Whisper AI** for **speech-to-text transcription**.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 📊 Detailed Interaction Flow
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### **1️⃣ User Interaction**
 
-### Analyzing the Bundle Size
+1. User selects **job role** and **experience level**.
+2. The frontend sends a **request to the backend** to generate **interview questions**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### **2️⃣ Question Generation**
 
-### Making a Progressive Web App
+1. Backend **retrieves relevant questions** from the **FAISS vector store**.
+2. AI **generates new questions** based on job requirements.
+3. Questions are sent to the frontend **for display**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### **3️⃣ Response Recording & Transcription**
 
-### Advanced Configuration
+1. The user records **video/audio responses**.
+2. The video is sent to the backend for **transcription using Whisper AI**.
+3. The transcribed text is **sent back to the frontend**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### **4️⃣ AI-Based Response Evaluation**
 
-### Deployment
+1. The **transcribed response** is sent to the backend.
+2. AI **analyzes and scores** the response based on:
+   - **Relevance** to the question.
+   - **Depth of knowledge**.
+   - **Clarity and articulation**.
+3. Evaluation **results** (score + feedback) are displayed to the user.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🚀 Hosting on RunPod (Cloud GPU)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+EdgeHire is **deployed on RunPod**, which provides **powerful GPUs** at affordable hourly rates.
+
+### **⚡ RunPod Configurations Used:**
+
+| Plan                | Specs                        | Price    |
+| ------------------- | ---------------------------- | -------- |
+| **RTX 4090**        | 24GB VRAM, 29GB RAM, 6 vCPUs | $0.69/hr |
+| **Secure Cloud**    | Scalable cloud service       | $0.34/hr |
+| **Community Cloud** | Low-cost shared cloud        | $0.34/hr |
+
+### **💡 Why RunPod?**
+
+- **Affordable** GPU hosting.
+- **Scalable performance** for AI workloads.
+- **No local hardware dependency**.
+
+### **🛠️ Deployment Steps on RunPod**
+
+1. **Select an instance** (RTX 4090 recommended for AI workloads).
+2. **Pull the EdgeHire repository**:
+   ```bash
+   git clone https://github.com/abinesha312/edgehire.git
+   cd edgehire
+   ```
+3. **Install dependencies**:
+   ```bash
+   pip install -r backend/requirements.txt
+   cd frontend && npm install
+   ```
+4. **Run the Flask backend**:
+   ```bash
+   cd backend
+   python app.py
+   ```
+5. **Start the React frontend**:
+   ```bash
+   cd ../frontend
+   npm start
+   ```
+6. **Access the platform** via `http://<RunPod-instance-IP>:3000`.
+
+---
+
+## 🔧 Implementation Details
+
+### **AI Model Integration**
+
+- **OpenAI GPT** → Generates realistic **interview questions**.
+- **FAISS Vector Store** → Efficient **question retrieval**.
+- **Whisper AI** → Converts **spoken responses to text**.
+
+### **Data Scraping (GeeksforGeeks)**
+
+- Python script (`ingest.py`):
+  - **Fetches** HTML content.
+  - **Cleans & processes** text.
+  - **Stores questions in FAISS**.
+
+### **Security Best Practices**
+
+✅ **Environment Variables** (`.env` for secrets).  
+✅ **API Key Management** (OpenAI keys securely stored).  
+✅ **GitHub Secret Scanning** enabled.
+
+---
+
+## 🎯 Future Improvements
+
+🔹 **Support for multi-round interview simulations**.  
+🔹 **Integrate facial expression analysis for better feedback**.  
+🔹 **Automated resume analysis & suggestion system**.
+
+---
+
+## 📜 License
+
+MIT License - Feel free to use and contribute!
+
+---
+
+## 💬 Need Help?
+
+If you have any questions, feel free to open an **issue** or contact **@abinesha312** on GitHub!
+
+🔗 **GitHub Repository**: [EdgeHire](https://github.com/abinesha312/edgehire)
