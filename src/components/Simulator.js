@@ -86,7 +86,7 @@ const Simulator = () => {
                 Cookies.set('role', jobRole);
                 Cookies.set('level', level);
                 // Make API call to generate questions
-                // const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/generate_questions', {
+                // const response = await fetch('https://sw932b4q1ot74v-5000.proxy.runpod.net/generate_questions', {
                 const response = await fetch('http://127.0.0.1:5000/generate_questions', {
                     method: 'POST',
                     headers: {
@@ -171,7 +171,7 @@ const Simulator = () => {
                 formData.append('totalChunks', totalChunks);
 
                 try {
-                    const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/upload_chunk', {
+                    const response = await fetch('https://sw932b4q1ot74v-5000.proxy.runpod.net/upload_chunk', {
                         // const response = await fetch('http://127.0.0.1:5000/upload_chunk', {
                         method: 'POST',
                         body: formData,
@@ -190,7 +190,7 @@ const Simulator = () => {
             }
 
             try {
-                const transcribeResponse = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/transcribe_video', {
+                const transcribeResponse = await fetch('https://sw932b4q1ot74v-5000.proxy.runpod.net/transcribe_video', {
                     // const transcribeResponse = await fetch('http://127.0.0.1:5000/transcribe_video', {
                     method: 'POST',
                 });
@@ -233,7 +233,7 @@ const Simulator = () => {
         };
 
         try {
-            const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/evaluate_response', {
+            const response = await fetch('https://sw932b4q1ot74v-5000.proxy.runpod.net/evaluate_response', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -303,7 +303,7 @@ const Simulator = () => {
         };
 
         try {
-            const response = await fetch('https://fwy8qp2m787vcf-5000.proxy.runpod.net/evaluate_response', {
+            const response = await fetch('https://sw932b4q1ot74v-5000.proxy.runpod.net/evaluate_response', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
